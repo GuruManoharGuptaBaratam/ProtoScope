@@ -1,0 +1,11 @@
+menu "ProtoScope Phase 1 runtime"
+
+config PROTOSCOPE_HEALTH_PERIOD_MS
+    int "Supervisor health-report period (ms)"
+    range 1000 60000
+    default 10000
+    help
+        Period for the low-rate supervisor health log. This is intentionally
+        separate from future protocol, UI, and storage work.
+
+endmenu

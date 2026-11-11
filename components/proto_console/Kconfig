@@ -1,0 +1,10 @@
+menu "ProtoScope development console"
+
+config PROTOSCOPE_CONSOLE_ENABLE
+    bool "Enable interactive development console"
+    default y
+    help
+        Starts an ESP-IDF REPL on UART0. GPIO43/44 remain reserved for this
+        programming and diagnostic console.
+
+endmenu

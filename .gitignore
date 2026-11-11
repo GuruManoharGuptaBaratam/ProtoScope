@@ -1,0 +1,67 @@
+# ESP-IDF build output and managed dependencies
+build/
+build_*/
+managed_components/
+dependencies.lock
+
+# ESP-IDF configuration files
+# Generated from sdkconfig.defaults
+sdkconfig
+sdkconfig.old
+sdkconfig.ci
+sdkconfig.before-*
+
+# Compiled object files and libraries
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.dylib
+*.dll
+
+# Embedded firmware binaries and map files
+*.elf
+*.bin
+*.hex
+*.map
+*.d
+
+# CMake and host build artifacts
+cmake-build-*/
+CMakeCache.txt
+CMakeFiles/
+*.ninja
+.ninja_*
+
+# Debugging symbols
+*.dSYM/
+
+# Python test caches and virtual environments
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+pytest-embedded/
+.venv/
+venv/
+env/
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.bak
+
+# Operating System files
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Runtime logs (preserve historical test-report logs)
+*.log
+!docs/test-reports/*.log

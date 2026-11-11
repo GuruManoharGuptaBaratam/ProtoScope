@@ -1,0 +1,3 @@
+dependencies:
+  # Phase 1 baseline: v5.5.6. ESP-IDF 5.4 and 6.x are outside this range.
+  idf: ">=5.5,<6.0"
