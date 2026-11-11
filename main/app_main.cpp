@@ -19,4 +19,5 @@ extern "C" void app_main(void)
     ESP_ERROR_CHECK(proto_console_start());
 
     ESP_LOGI(kTag, "ProtoScope Phase 1 foundation ready");
+    ESP_LOGI(kTag, "Phase 2 UART available; stopped until 'uart start'");
 }
