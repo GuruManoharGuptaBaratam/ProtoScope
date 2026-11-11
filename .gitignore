@@ -65,3 +65,6 @@ ehthumbs.db
 # Runtime logs (preserve historical test-report logs)
 *.log
 !docs/test-reports/*.log
+
+cache/
+compile_commands.json
