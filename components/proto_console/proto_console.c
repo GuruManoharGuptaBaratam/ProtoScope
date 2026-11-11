@@ -11,6 +11,7 @@
 #include "freertos/task.h"
 #include "proto_platform.h"
 #include "proto_tasks.h"
+#include "proto_can_console.h"
 #include "proto_uart_console.h"
 #include "sdkconfig.h"
 
@@ -29,6 +30,7 @@ static int status_command(int argc, char **argv)
     printf("  worker_messages: %" PRIu32 "\n", tasks.worker_messages);
     printf("  runtime_queue_overflows: %" PRIu32 "\n", tasks.queue_overflows);
     proto_uart_console_print_status();
+    proto_can_console_print_status();
     return 0;
 }
 
@@ -57,7 +59,7 @@ static esp_err_t register_commands(void)
 {
     const esp_console_cmd_t status = {
         .command = "status",
-        .help = "Show platform, runtime and UART status",
+        .help = "Show platform, runtime, UART and CAN status",
         .hint = NULL,
         .func = &status_command,
         .argtable = NULL,
@@ -87,6 +89,8 @@ static esp_err_t register_commands(void)
                         "Reboot command registration failed");
     ESP_RETURN_ON_ERROR(proto_uart_console_register(), TAG,
                         "UART command registration failed");
+    ESP_RETURN_ON_ERROR(proto_can_console_register(), TAG,
+                        "CAN command registration failed");
     return ESP_OK;
 }
 #endif

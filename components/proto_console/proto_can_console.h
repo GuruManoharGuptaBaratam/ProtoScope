@@ -1,0 +1,6 @@
+#pragma once
+
+#include "esp_err.h"
+
+esp_err_t proto_can_console_register(void);
+void proto_can_console_print_status(void);
