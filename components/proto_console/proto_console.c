@@ -12,6 +12,7 @@
 #include "proto_platform.h"
 #include "proto_tasks.h"
 #include "proto_can_console.h"
+#include "proto_rs485_console.h"
 #include "proto_uart_console.h"
 #include "sdkconfig.h"
 
@@ -31,6 +32,7 @@ static int status_command(int argc, char **argv)
     printf("  runtime_queue_overflows: %" PRIu32 "\n", tasks.queue_overflows);
     proto_uart_console_print_status();
     proto_can_console_print_status();
+    proto_rs485_console_print_status();
     return 0;
 }
 
@@ -59,7 +61,7 @@ static esp_err_t register_commands(void)
 {
     const esp_console_cmd_t status = {
         .command = "status",
-        .help = "Show platform, runtime, UART and CAN status",
+        .help = "Show platform, runtime, UART, CAN and RS-485 status",
         .hint = NULL,
         .func = &status_command,
         .argtable = NULL,
@@ -91,6 +93,8 @@ static esp_err_t register_commands(void)
                         "UART command registration failed");
     ESP_RETURN_ON_ERROR(proto_can_console_register(), TAG,
                         "CAN command registration failed");
+    ESP_RETURN_ON_ERROR(proto_rs485_console_register(), TAG,
+                        "RS-485 command registration failed");
     return ESP_OK;
 }
 #endif

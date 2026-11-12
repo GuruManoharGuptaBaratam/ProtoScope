@@ -19,4 +19,11 @@ trap 'rm -rf -- "$proto_test_dir"' EXIT
     "$proto_root/components/proto_twai/proto_can_codec.c" \
     -o "$proto_test_dir/test_can_codec"
 "$proto_test_dir/test_can_codec"
+"${CC:-cc}" -std=c11 -Wall -Wextra -Werror -pedantic \
+    -fsanitize=address,undefined -g \
+    -I "$proto_root/components/proto_rs485/include" \
+    "$proto_root/tests/host/test_rs485_timing.c" \
+    "$proto_root/components/proto_rs485/proto_rs485_timing.c" \
+    -o "$proto_test_dir/test_rs485_timing"
+"$proto_test_dir/test_rs485_timing"
 python3 "$proto_root/tests/host/test_n16r8_config.py"

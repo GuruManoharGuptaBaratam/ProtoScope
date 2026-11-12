@@ -58,7 +58,7 @@ components/proto_event/       common event envelope
 components/proto_route/       route registry and executor
 components/proto_uart/        external UART adapter
 components/proto_twai/        Classic CAN/TWAI adapter (implemented in Phase 3)
-components/proto_rs485/       half-duplex UART adapter
+components/proto_rs485/       half-duplex UART adapter (implemented in Phase 4)
 components/proto_i2c/         controller transaction adapter
 components/proto_spi/         external controller transaction adapter
 components/proto_ui/          TFT and encoder
@@ -244,6 +244,7 @@ Interactive console ready on UART0 at 115200 baud
 ProtoScope Phase 1 foundation ready
 Phase 2 UART available; stopped until 'uart start'
 Phase 3 CAN available; stopped until 'can start'
+Phase 4 RS-485 available; stopped until 'rs485 start'
 ```
 
 ## 6. Testing and verification

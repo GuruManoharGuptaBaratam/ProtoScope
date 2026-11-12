@@ -33,6 +33,11 @@ in the development console. [Phase 2 instructions](docs/phase-2-uart.md) cover
 framing, console commands, wiring and automated external-adapter tests.
 Successful physical boot and external UART TX/RX are still unverified.
 
+**Phase 4 (RS-485):** raw half-duplex serial on UART2 (GPIO15/16) through an
+automatic-direction module; stopped until `rs485 start`. See
+[`docs/phase-4-rs485.md`](docs/phase-4-rs485.md). Use `./tools/verify_phase4.sh`.
+Not built against ESP-IDF or tested on hardware yet. Modbus RTU is not included.
+
 **Phase 3 (CAN):** TWAI on GPIO4/5 through the SN65HVD230 transceiver; stopped
 until `can start` in the console. See [`docs/phase-3-can.md`](docs/phase-3-can.md)
 for the pre-wiring gate, commands and the hardware acceptance steps. Use

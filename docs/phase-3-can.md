@@ -51,7 +51,12 @@ termination on every node (NFR-004). Never connect 5 V to a GPIO.
 - Bit rates 125 k, 250 k, 500 k (default), 1 M. 11-bit and 29-bit identifiers,
   data and remote frames, DLC 0-8. Accept-all filter.
 - Modes: `normal`, `listen` (never drives the bus), `selftest` (no-ACK loopback
-  for a single-board driver check; it does **not** satisfy M3).
+  for a single-board driver check; it does **not** satisfy M3). `selftest` still
+  needs the transmitted signal to come back on the RX pin: either a CAN
+  transceiver is attached, or, with no module, a jumper wire from GPIO4 to GPIO5
+  (remove it before connecting a transceiver). With nothing on GPIO5 the
+  controller sees bit errors, goes error-passive, then bus-off, and recovers
+  automatically; this was observed on the first board test (2026-11-11).
 - A task drains the TWAI queue into a 16-frame application queue. TX queue is 8
   deep; `can send` returns immediately.
 - Error-passive and bus-off are counted and logged; bus-off recovery is automatic.

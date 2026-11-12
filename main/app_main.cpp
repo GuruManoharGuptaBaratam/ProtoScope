@@ -21,4 +21,5 @@ extern "C" void app_main(void)
     ESP_LOGI(kTag, "ProtoScope Phase 1 foundation ready");
     ESP_LOGI(kTag, "Phase 2 UART available; stopped until 'uart start'");
     ESP_LOGI(kTag, "Phase 3 CAN available; stopped until 'can start'");
+    ESP_LOGI(kTag, "Phase 4 RS-485 available; stopped until 'rs485 start'");
 }
