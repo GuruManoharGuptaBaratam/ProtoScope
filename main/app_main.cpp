@@ -22,4 +22,6 @@ extern "C" void app_main(void)
     ESP_LOGI(kTag, "Phase 2 UART available; stopped until 'uart start'");
     ESP_LOGI(kTag, "Phase 3 CAN available; stopped until 'can start'");
     ESP_LOGI(kTag, "Phase 4 RS-485 available; stopped until 'rs485 start'");
+    ESP_LOGI(kTag, "Phase 5 I2C/SPI controllers available; stopped until 'i2c start' / 'spi start'");
+    ESP_LOGI(kTag, "Phase 6 common events available through 'msg'");
 }

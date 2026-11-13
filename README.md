@@ -33,6 +33,12 @@ in the development console. [Phase 2 instructions](docs/phase-2-uart.md) cover
 framing, console commands, wiring and automated external-adapter tests.
 Successful physical boot and external UART TX/RX are still unverified.
 
+**Phases 5-6 (I2C/SPI controllers, common events):** see
+[`docs/phase-5-i2c-spi.md`](docs/phase-5-i2c-spi.md) and
+[`docs/phase-6-event-abstraction.md`](docs/phase-6-event-abstraction.md). Use
+`./tools/verify_phase6.sh`. Not built against ESP-IDF or tested on hardware yet.
+There is no routing or conversion yet (Phase 7).
+
 **Phase 4 (RS-485):** raw half-duplex serial on UART2 (GPIO15/16) through an
 automatic-direction module; stopped until `rs485 start`. See
 [`docs/phase-4-rs485.md`](docs/phase-4-rs485.md). Use `./tools/verify_phase4.sh`.

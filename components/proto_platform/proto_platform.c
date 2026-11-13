@@ -92,5 +92,5 @@ void proto_platform_print_status(FILE *stream)
             (unsigned)esp_get_minimum_free_heap_size());
     fprintf(stream, "  psram_initialized: %s\n", esp_psram_is_initialized() ? "yes" : "no");
     fprintf(stream, "  psram_size_bytes: %u\n", (unsigned)esp_psram_get_size());
-    fprintf(stream, "  protocol_drivers: I2C/SPI inactive; UART, CAN and RS485 status below\n");
+    fprintf(stream, "  protocol_drivers: all interfaces start stopped; status below\n");
 }

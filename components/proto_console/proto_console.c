@@ -13,6 +13,9 @@
 #include "proto_tasks.h"
 #include "proto_can_console.h"
 #include "proto_rs485_console.h"
+#include "proto_i2c_console.h"
+#include "proto_spi_console.h"
+#include "proto_msg_console.h"
 #include "proto_uart_console.h"
 #include "sdkconfig.h"
 
@@ -33,6 +36,8 @@ static int status_command(int argc, char **argv)
     proto_uart_console_print_status();
     proto_can_console_print_status();
     proto_rs485_console_print_status();
+    proto_i2c_console_print_status();
+    proto_spi_console_print_status();
     return 0;
 }
 
@@ -61,7 +66,7 @@ static esp_err_t register_commands(void)
 {
     const esp_console_cmd_t status = {
         .command = "status",
-        .help = "Show platform, runtime, UART, CAN and RS-485 status",
+        .help = "Show platform, runtime and all interface status",
         .hint = NULL,
         .func = &status_command,
         .argtable = NULL,
@@ -95,6 +100,12 @@ static esp_err_t register_commands(void)
                         "CAN command registration failed");
     ESP_RETURN_ON_ERROR(proto_rs485_console_register(), TAG,
                         "RS-485 command registration failed");
+    ESP_RETURN_ON_ERROR(proto_i2c_console_register(), TAG,
+                        "I2C command registration failed");
+    ESP_RETURN_ON_ERROR(proto_spi_console_register(), TAG,
+                        "SPI command registration failed");
+    ESP_RETURN_ON_ERROR(proto_msg_console_register(), TAG,
+                        "event command registration failed");
     return ESP_OK;
 }
 #endif
