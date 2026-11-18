@@ -33,6 +33,11 @@ in the development console. [Phase 2 instructions](docs/phase-2-uart.md) cover
 framing, console commands, wiring and automated external-adapter tests.
 Successful physical boot and external UART TX/RX are still unverified.
 
+**Phase 7 (routing engine):** a configurable engine for the 20 directed routes RT-01..RT-20,
+all disabled until configured and enabled from the console. See
+[`docs/phase-7-routing-engine.md`](docs/phase-7-routing-engine.md). Use `./tools/verify_phase7.sh`.
+Host-tested only; not built against ESP-IDF or tested on hardware yet. M7 is not complete.
+
 **Phases 5-6 (I2C/SPI controllers, common events):** see
 [`docs/phase-5-i2c-spi.md`](docs/phase-5-i2c-spi.md) and
 [`docs/phase-6-event-abstraction.md`](docs/phase-6-event-abstraction.md). Use

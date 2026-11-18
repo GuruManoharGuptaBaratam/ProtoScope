@@ -55,7 +55,7 @@ Recommended later additions are:
 
 ```text
 components/proto_event/       common event envelope (implemented in Phase 6)
-components/proto_route/       route registry and executor
+components/proto_route/       route registry and executor (implemented in Phase 7)
 components/proto_uart/        external UART adapter
 components/proto_twai/        Classic CAN/TWAI adapter (implemented in Phase 3)
 components/proto_rs485/       half-duplex UART adapter (implemented in Phase 4)
@@ -247,6 +247,7 @@ Phase 3 CAN available; stopped until 'can start'
 Phase 4 RS-485 available; stopped until 'rs485 start'
 Phase 5 I2C/SPI controllers available; stopped until 'i2c start' / 'spi start'
 Phase 6 common events available through 'msg'
+Phase 7 routing engine available through 'route'; all 20 routes disabled
 ```
 
 ## 6. Testing and verification

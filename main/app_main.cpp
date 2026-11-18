@@ -24,4 +24,5 @@ extern "C" void app_main(void)
     ESP_LOGI(kTag, "Phase 4 RS-485 available; stopped until 'rs485 start'");
     ESP_LOGI(kTag, "Phase 5 I2C/SPI controllers available; stopped until 'i2c start' / 'spi start'");
     ESP_LOGI(kTag, "Phase 6 common events available through 'msg'");
+    ESP_LOGI(kTag, "Phase 7 routing engine available through 'route'; all 20 routes disabled");
 }

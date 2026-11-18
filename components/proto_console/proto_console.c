@@ -16,6 +16,7 @@
 #include "proto_i2c_console.h"
 #include "proto_spi_console.h"
 #include "proto_msg_console.h"
+#include "proto_route_console.h"
 #include "proto_uart_console.h"
 #include "sdkconfig.h"
 
@@ -38,6 +39,7 @@ static int status_command(int argc, char **argv)
     proto_rs485_console_print_status();
     proto_i2c_console_print_status();
     proto_spi_console_print_status();
+    proto_route_console_print_status();
     return 0;
 }
 
@@ -106,6 +108,8 @@ static esp_err_t register_commands(void)
                         "SPI command registration failed");
     ESP_RETURN_ON_ERROR(proto_msg_console_register(), TAG,
                         "event command registration failed");
+    ESP_RETURN_ON_ERROR(proto_route_console_register(), TAG,
+                        "route command registration failed");
     return ESP_OK;
 }
 #endif
