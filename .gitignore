@@ -68,3 +68,4 @@ ehthumbs.db
 
 cache/
 compile_commands.json
+before-test-backup.zip

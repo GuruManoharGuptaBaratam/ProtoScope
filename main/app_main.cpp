@@ -5,6 +5,7 @@
 #include "proto_console.h"
 #include "proto_platform.h"
 #include "proto_tasks.h"
+#include "proto_selftest.h"  // SELFTEST (temporary): remove with proto_selftest.c/.h
 
 namespace {
 constexpr char kTag[] = "app";
@@ -17,6 +18,7 @@ extern "C" void app_main(void)
     ESP_ERROR_CHECK(proto_tasks_start());
     proto_platform_log_boot_summary();
     ESP_ERROR_CHECK(proto_console_start());
+    ESP_ERROR_CHECK(proto_selftest_register());  // SELFTEST (temporary): adds the `selftest` command
 
     ESP_LOGI(kTag, "ProtoScope Phase 1 foundation ready");
     ESP_LOGI(kTag, "Phase 2 UART available; stopped until 'uart start'");

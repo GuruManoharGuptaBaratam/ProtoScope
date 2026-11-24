@@ -1,8 +1,8 @@
 #pragma once
 
+#include <stdbool.h>
 #include "esp_err.h"
 #include "hal/spi_types.h"
-#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C" {

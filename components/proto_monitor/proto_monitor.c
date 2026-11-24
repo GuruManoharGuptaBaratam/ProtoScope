@@ -25,7 +25,7 @@ void proto_monitor_collect(proto_monitor_t *m)
     if (!m) { return; }
     memset(m, 0, sizeof(*m));
     const esp_app_desc_t *app = esp_app_get_description();
-    snprintf(m->firmware, sizeof(m->firmware), "%.11s", app ? app->version : "?");
+    snprintf(m->firmware, sizeof(m->firmware), "%.*s", (int)sizeof(m->firmware) - 1, app ? app->version : "?");
     m->uptime_s = (uint32_t)(esp_timer_get_time() / 1000000);
     m->free_heap = (uint32_t)esp_get_free_heap_size();
     m->min_free_heap = (uint32_t)esp_get_minimum_free_heap_size();
