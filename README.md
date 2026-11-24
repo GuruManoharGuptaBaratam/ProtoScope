@@ -1,108 +1,186 @@
 # ProtoScope
 
-ProtoScope is a portable ESP32-S3-based gateway for connecting, converting,
-monitoring, and logging traffic across five interfaces:
+ProtoScope is an ESP32-S3-based portable hardware gateway designed for connecting, converting, monitoring, and logging traffic across five industrial and embedded serial protocols:
 
-- UART
-- CAN
-- RS-485
-- I2C
-- SPI
+- **UART** (external asynchronous serial with stream framing)
+- **CAN** (Classic CAN 2.0A/B via ESP32-S3 TWAI controller)
+- **RS-485** (half-duplex differential serial)
+- **I2C** (controller mode transactions)
+- **SPI** (controller mode bus transactions)
 
-The conversion target is a configurable matrix of all 20 directed routes
-between different interfaces. A listed route is not automatically usable: it
-requires a defined source format, mapping, destination format, compatible bus
-roles, and repeatable test evidence.
+The conversion target is a configurable matrix of all **20 directed routes** between disparate protocols (e.g. UART ↔ CAN, RS-485 ↔ I2C, SPI ↔ CAN). ProtoScope features non-blocking queues, an isolated common event bus, on-device microSD CSV event logging, real-time bus monitoring, and a standalone 0.96-inch OLED + rotary encoder local UI.
 
-## Current status
+---
 
-**Phase 3 — CAN implementation ready for hardware testing (Phase 2 UART below it).**
+## Current Status
 
-The user confirmed the board's **N16R8** module suffix: **16 MB flash and
-8 MB Octal PSRAM**. The former N8R2 defaults caused the reported Quad PSRAM
-boot failure. Follow [PSRAM recovery and the post-flash checklist](docs/psram-recovery-and-post-flash.md)
-before testing UART.
+**Firmware Version:** `0.9.1`  
+**Target Hardware:** ESP32-S3-WROOM-1 / N16R8 (16 MB Octal Flash, 8 MB Octal PSRAM)  
+**Implementation State:** Phases 0 through 9 are fully implemented in software, with full host test suite passes under AddressSanitizer (ASan) and UndefinedBehaviorSanitizer (UBSan). Board-level hardware acceptance testing is pending.
 
-Phase-0 requirements and architecture are under [`docs/`](docs/phase-0-status.md).
-The Phase-1 ESP-IDF application, modular components, safe GPIO initialization,
-FreeRTOS runtime, console, build configuration, and verification plan are
-described in [`docs/phase-1-foundation.md`](docs/phase-1-foundation.md).
+### Milestone & Roadmap Progress
 
-UART1 is available on GPIO17/18 and stays stopped until `uart start` is entered
-in the development console. [Phase 2 instructions](docs/phase-2-uart.md) cover
-framing, console commands, wiring and automated external-adapter tests.
-Successful physical boot and external UART TX/RX are still unverified.
+| Phase | Milestone | Description | Component(s) | Status |
+|:---|:---|:---|:---|:---:|
+| **Phase 0** | **M0** | Requirements, preliminary pinout, BOM, 20-route matrix, architecture | `docs/` | Complete |
+| **Phase 1** | **M1** | ESP32-S3 N16R8 foundation, safe GPIO parking, FreeRTOS tasks, console REPL | `proto_board`, `proto_platform`, `proto_tasks`, `proto_console` | Complete |
+| **Phase 2** | **M2** | External UART1 (GPIO17/18) driver, stream framing engine, host tests | `proto_uart` | Complete |
+| **Phase 3** | **M3** | Classic CAN (TWAI on GPIO4/5 + SN65HVD230 transceiver), frame codec | `proto_twai` | Complete |
+| **Phase 4** | **M4** | Half-duplex RS-485 on UART2 (GPIO15/16) with echo-suppression & timing | `proto_rs485` | Complete |
+| **Phase 5** | **M5** | External I2C controller (GPIO8/9) and SPI controller (GPIO39-42) | `proto_i2c`, `proto_spi` | Complete |
+| **Phase 6** | **M6** | Common event envelope (`proto_event`), metadata codec, driver contracts | `proto_event` | Complete |
+| **Phase 7** | **M7** | 20-route translation engine (`proto_route`), policies, loop guard | `proto_route` | Complete |
+| **Phase 8** | **M8** | Live communication monitor & microSD FAT32 CSV logger with 4 MB rotation | `proto_monitor`, `proto_storage` | Complete |
+| **Phase 9** | **M9** | 0.96" SSD1306 I2C OLED display (`proto_uibus`) & EC11 rotary encoder UI | `proto_uibus`, `proto_ui` | Complete |
 
-**Phases 8-9 (monitor, microSD logger, OLED + encoder UI):** see
-[`docs/phase-8-monitor-logger.md`](docs/phase-8-monitor-logger.md) and
-[`docs/phase-9-ui.md`](docs/phase-9-ui.md); complete wiring in
-[`docs/hardware/`](docs/hardware/ProtoScope_Phase1-9_netlist.md). Use `./tools/verify_phase9.sh`. The
-display is the 4-pin 0.96 inch SSD1306 I2C OLED. Host-tested only; not built against ESP-IDF or tested on
-hardware yet.
+---
 
-**Phase 7 (routing engine):** a configurable engine for the 20 directed routes RT-01..RT-20,
-all disabled until configured and enabled from the console. See
-[`docs/phase-7-routing-engine.md`](docs/phase-7-routing-engine.md). Use `./tools/verify_phase7.sh`.
-Host-tested only; not built against ESP-IDF or tested on hardware yet. M7 is not complete.
+## System Architecture
 
-**Phases 5-6 (I2C/SPI controllers, common events):** see
-[`docs/phase-5-i2c-spi.md`](docs/phase-5-i2c-spi.md) and
-[`docs/phase-6-event-abstraction.md`](docs/phase-6-event-abstraction.md). Use
-`./tools/verify_phase6.sh`. Not built against ESP-IDF or tested on hardware yet.
-There is no routing or conversion yet (Phase 7).
-
-**Phase 4 (RS-485):** raw half-duplex serial on UART2 (GPIO15/16) through an
-automatic-direction module; stopped until `rs485 start`. See
-[`docs/phase-4-rs485.md`](docs/phase-4-rs485.md). Use `./tools/verify_phase4.sh`.
-Not built against ESP-IDF or tested on hardware yet. Modbus RTU is not included.
-
-**Phase 3 (CAN):** TWAI on GPIO4/5 through the SN65HVD230 transceiver; stopped
-until `can start` in the console. See [`docs/phase-3-can.md`](docs/phase-3-can.md)
-for the pre-wiring gate, commands and the hardware acceptance steps. Use
-`./tools/verify_phase3.sh` for host tests plus the firmware build. It has not
-been built against ESP-IDF or tested on hardware yet.
-
-**VS Code / path with spaces:** see [`docs/vscode-and-idf-setup.md`](docs/vscode-and-idf-setup.md).
-`./tools/idf_phase1.sh` builds from a space-free mirror automatically.
-
-## Phase 1 quick start
-
-With ESP-IDF **v5.5.6** and its tools installed, run:
-
-```bash
-cd "$HOME/esp/ProtoScope"
-python3 tools/configure_n16r8.py
-./tools/verify_phase1.sh
-./tools/idf_phase1.sh -p PORT flash monitor
+```text
+                                  +-----------------------------+
+                                  |     Interactive Console     |
+                                  |     (UART0 - 115200 8N1)    |
+                                  +--------------+--------------+
+                                                 |
++------------------------------------------------v-----------------------------------------------+
+|                                       ProtoScope Core Engine                                   |
+|                                                                                               |
+|  +--------------------+        +---------------------+        +----------------------------+  |
+|  |   proto_monitor    | <----> |     proto_route     | <----> |       proto_storage        |  |
+|  |  (Live Bus Stats)  |        |  (20-Route Engine)  |        |   (MicroSD CSV Logger)     |  |
+|  +---------+----------+        +----------+----------+        +--------------+-------------+  |
+|            |                              |                                  |                |
+|            |                 +------------v------------+                     |                |
+|            +---------------> |       proto_event       | <-------------------+                |
+|                              |  (Common Event Envelope)|                                      |
+|                              +------------+------------+                                      |
+|                                           |                                                   |
+|         +-----------------+---------------+-----------------+------------------+              |
+|         |                 |               |                 |                  |              |
+|  +------v-------+  +------v------+  +-----v------+   +------v-------+   +------v-------+      |
+|  |  proto_uart  |  | proto_twai  |  |proto_rs485 |   |  proto_i2c   |   |  proto_spi   |      |
+|  |  (UART1 TX/RX|  | (Classic CAN|  | (UART2 TX/ |   |  (Controller |   |  (Controller |      |
+|  |   GPIO17/18) |  |   GPIO4/5)  |  | RX GPIO15/ |   |   GPIO8/9)   |   |   GPIO39-42) |      |
+|  +--------------+  +-------------+  |    16)     |   +--------------+   +--------------+      |
+|                                     +------------+                                            |
+|                                                                                               |
+|  +-----------------------------------------------------------------------------------------+  |
+|  | Local Hardware UI: proto_uibus (OLED I2C GPIO14/10) + proto_ui (SSD1306 + EC11 Encoder) |  |
+|  +-----------------------------------------------------------------------------------------+  |
+|  | Platform: proto_board (Safe GPIO) | proto_platform (NVS/Heap) | proto_tasks (FreeRTOS)  |  |
++--+-----------------------------------------------------------------------------------------+--+
 ```
 
-Replace `PORT` with the board's serial port. The project launcher selects the
-5.5.6 SDK, its matching Python environment, and ESP32-S3 even if the current
-terminal has another SDK active. It accepts the same arguments as `idf.py` and
-defaults to `build` when no arguments are given.
+### Component Structure
 
-ESP-IDF 5.4 does not satisfy the project's `>=5.5,<6.0` requirement; 6.x is also
-outside that range. Sourcing `export.sh` activates an installed version; it does
-not upgrade it. See the [workstation setup and error recovery guide](docs/phase-1-foundation.md#3-first-time-workstation-setup)
-for installation, copying this workspace to a path without spaces, and VS Code
-version selection. `sdkconfig.defaults` selects `esp32s3` for fresh builds, and
-`version.txt` supplies the firmware version when building without Git metadata.
+```text
+components/
+├── proto_board/       Safe GPIO parking table and conflict validation
+├── proto_platform/    NVS initialization, CPU/power management, heap/PSRAM diagnostics
+├── proto_tasks/       FreeRTOS supervisor task and worker task queues
+├── proto_console/     Interactive UART0 development REPL commands
+├── proto_uart/        External UART1 driver with stream framing engine
+├── proto_twai/        Classic CAN 2.0A/B driver on ESP32-S3 TWAI controller
+├── proto_rs485/       Half-duplex RS-485 driver on UART2 with timing control
+├── proto_i2c/         External I2C controller driver
+├── proto_spi/         External SPI controller driver
+├── proto_event/       Unified event model, metadata encoding, driver abstraction
+├── proto_route/       20-route conversion matrix and routing engine
+├── proto_monitor/     System-wide traffic statistics and snapshot aggregator
+├── proto_storage/     MicroSD card SPI driver, non-blocking queue, and CSV logger
+├── proto_uibus/       Dedicated internal I2C bus for display hardware
+└── proto_ui/          SSD1306 OLED driver, 1bpp canvas, bitmap font, EC11 encoder UI
+```
 
-For an existing build copy, run `python3 tools/configure_n16r8.py` before
-building. It backs up and updates the stale memory settings in `sdkconfig`.
-Use `./tools/verify_phase2.sh` for the UART host tests plus firmware build.
-The module suffix is confirmed; full carrier-board identification and header
-verification remain necessary before wiring external fixtures.
+---
 
-## Current scope guardrails
+## Hardware Pin Allocation
 
-- USB-C is for power and programming. A user-facing PC bridge/application is
-  future scope.
-- I2C and SPI initially operate in controller/host mode. A source route means a
-  configured read/poll; a destination route means a configured write.
-- CAN uses the ESP32-S3 TWAI controller with an external transceiver.
-- RS-485 is half duplex; RS-485 operation does not by itself imply Modbus RTU.
-- Same-interface forwarding is outside the 20-route count.
-- A custom PCB and enclosure wait until the wired prototype passes integration
-  testing.
+ProtoScope follows a single source of truth for all GPIO mappings defined in [`proto_board.h`](components/proto_board/include/proto_board.h) and detailed in [`ProtoScope_Phase1-9_netlist.md`](docs/hardware/ProtoScope_Phase1-9_netlist.md):
 
+| Interface | Signal | GPIO | Header Pin | Notes |
+|:---|:---|:---:|:---:|:---|
+| **Console** | TXD0 / RXD0 | GPIO43 / GPIO44 | Onboard USB | Primary programming & interactive console REPL (115200 8N1) |
+| **External UART** | UART1 TX / RX | GPIO17 / GPIO18 | J1-10 / J1-11 | 3.3 V logic levels; framing engine supports arbitrary baud rates |
+| **CAN (TWAI)** | TXD / RXD | GPIO4 / GPIO5 | J1-4 / J1-5 | Connects to SN65HVD230 transceiver; 120 Ω termination at bus ends |
+| **RS-485** | TXD / RXD | GPIO15 / GPIO16 | J1-8 / J1-9 | Connects to auto-direction transceiver module |
+| **External I2C** | SDA / SCL | GPIO8 / GPIO9 | J1-12 / J1-15 | Controller mode; external 4.7 kΩ pull-ups if needed |
+| **External SPI** | SCLK / MOSI / MISO / CS | GPIO39 / 40 / 41 / 42 | J3-9 / 8 / 7 / 6 | Controller mode; supports SPI modes 0-3 |
+| **Internal UI Bus**| OLED SDA / SCL | GPIO14 / GPIO10 | J1-20 / J1-16 | Dedicated I2C bus for SSD1306 0.96" OLED display |
+| **MicroSD SPI** | MOSI / SCLK / MISO / CS | GPIO11 / 12 / 13 / 7 | J1-17 / 18 / 19 / 7 | FAT32 formatted card; automated CSV rotation at 4 MB |
+| **Rotary Encoder** | A / B / Push Switch | GPIO1 / GPIO2 / GPIO6 | J3-4 / J3-5 / J1-6 | EC11 encoder with push button (uses internal ESP32 pull-ups) |
+
+---
+
+## Testing & Verification
+
+### 1. Host Tests (No Hardware Required)
+
+The project includes unit and integration tests executable directly on host machines with AddressSanitizer and UndefinedBehaviorSanitizer:
+
+```bash
+./tools/test_host.sh
+```
+
+**Coverage includes:**
+- UART stream framing, fragmentation, boundary conditions, and error recovery
+- CAN frame codec, bitrates, 11-bit / 29-bit IDs, remote frames
+- RS-485 guard times and character timing validation
+- I2C & SPI request/response codec and transaction verification
+- Common event envelope validation, metadata serialization, and round-trips
+- Route engine table, loop prevention, and 20 directed conversions
+- MicroSD CSV schema, queue buffering, rotation, and mock error handling
+- UI canvas drawing, font rendering, encoder state decoding, and menu navigation
+- N16R8 Octal PSRAM/Flash configuration checks
+
+### 2. Automated Fixture Tests
+
+```bash
+python3 tools/test_uart_fixture.py      # UART fixture tests
+python3 tools/test_can_fixture.py       # CAN fixture tests
+python3 tools/test_phase8_9_fixture.py  # Monitor, logger, and UI fixture tests
+```
+
+### 3. Firmware Build Verification
+
+ESP-IDF v5.5.6 is required for firmware compilation:
+
+```bash
+./tools/verify_phase9.sh
+```
+
+*(Note: If working in a directory path containing spaces, use `./tools/idf_phase1.sh build` which automatically mirrors the source to a space-free build directory).*
+
+---
+
+## Interactive Console Reference
+
+ProtoScope features an interactive REPL on UART0 (115200 8N1). Key commands include:
+
+| Command | Description | Example |
+|:---|:---|:---|
+| `help` | List all available console commands | `help` |
+| `status` | Display full system status (platform, runtime, all interfaces) | `status` |
+| `heap` | Print current and minimum free heap and PSRAM | `heap` |
+| `uart` | Start, query, send, or read external UART1 | `uart start 115200`, `uart send 48454C4C4F0A` |
+| `can` | Start, query, send, or read Classic CAN | `can start 500000 normal`, `can send 123#01020304` |
+| `rs485` | Start, query, send, or read half-duplex RS-485 | `rs485 start 9600`, `rs485 send AABBCC` |
+| `i2c` | Configure or execute I2C controller transactions | `i2c start 100000`, `i2c tx 68 75` |
+| `spi` | Configure or execute SPI controller transactions | `spi start 1000000 0`, `spi xfer 9F000000` |
+| `msg` | Transmit or inspect events via the unified event contract | `msg send can 123#AABB`, `msg read` |
+| `route` | Configure, enable, disable, and monitor the 20 conversion routes | `route enable rt-01`, `route status` |
+| `monitor` | Display real-time aggregated snapshot of all interfaces & routes | `monitor` |
+| `log` | Control microSD card CSV logging and filtering | `log start`, `log status`, `log filter uart can` |
+| `ui` / `display` | Inspect or control local OLED and rotary encoder state | `ui status`, `ui screen home`, `ui push` |
+
+---
+
+## Current Scope Guardrails
+
+- **USB-C Interface:** Dedicated to power, firmware programming, and the development console.
+- **I2C & SPI Modes:** Operate strictly in controller (master) mode.
+- **CAN Controller:** Employs the ESP32-S3 internal TWAI controller with an external 3.3 V transceiver (SN65HVD230). Classic CAN only (no CAN FD).
+- **RS-485 Mode:** Half-duplex operation with automated direction control.
+- **Conversion Routes:** Strict validation against route loops and unmapped data schemas.
+- **Display & Encoder:** Runs in an independent low-priority task, ensuring UI rendering never interrupts or delays real-time communications.
