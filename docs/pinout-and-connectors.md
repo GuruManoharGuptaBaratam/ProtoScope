@@ -123,3 +123,9 @@ Do not approve this pinout for wiring until all of the following are complete:
 The candidate board header and variant information comes from the
 [Espressif ESP32-S3-DevKitC-1 v1.1 user guide](https://docs.espressif.com/projects/esp-dev-kits/en/latest/esp32s3/esp32-s3-devkitc-1/user_guide_v1.1.html).
 
+## Update (firmware 0.9.0): display and UI pins
+The fitted display is a 4-pin 0.96 inch OLED (SSD1306, I2C), not the 2.8 inch TFT. It uses its own I2C bus:
+SDA = GPIO14, SCL = GPIO10 (the pins once reserved for TFT D/C and CS), VCC = 3V3, GND = GND. GPIO21 (TFT
+reset) is spare. The microSD module uses SCK GPIO12, MOSI GPIO11, MISO GPIO13, CS GPIO7. Encoder: A GPIO1,
+B GPIO2, push GPIO6. The external I2C port (GPIO8/9) and external SPI port (GPIO39-42) are unchanged.
+Complete wiring: [`hardware/ProtoScope_Phase1-9_netlist.md`](hardware/ProtoScope_Phase1-9_netlist.md).

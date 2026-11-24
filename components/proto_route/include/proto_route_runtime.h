@@ -17,6 +17,8 @@ esp_err_t proto_route_runtime_start(void);
 void proto_route_runtime_lock(void);
 void proto_route_runtime_unlock(void);
 proto_route_engine_t *proto_route_runtime_engine(void);
+/* True when an enabled route reads events from this interface (takes the lock itself). */
+bool proto_route_runtime_source_in_use(proto_protocol_t protocol);
 
 #ifdef __cplusplus
 }

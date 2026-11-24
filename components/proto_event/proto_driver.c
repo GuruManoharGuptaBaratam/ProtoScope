@@ -21,6 +21,29 @@ uint64_t proto_event_next_id(void)
     return id;
 }
 
+static volatile proto_event_observer_t s_observer;
+
+void proto_event_set_observer(proto_event_observer_t observer)
+{
+    s_observer = observer;
+}
+
+static uint64_t now_us(void);
+
+static void observe(const proto_event_t *event)
+{
+    const proto_event_observer_t fn = s_observer;
+    if (!fn || !event) { return; }
+    if (event->timestamp_us == 0) {
+        /* TX requests are built without a time; stamp them so the log is ordered. */
+        proto_event_t stamped = *event;
+        stamped.timestamp_us = now_us();
+        fn(&stamped);
+    } else {
+        fn(event);
+    }
+}
+
 static uint64_t now_us(void)
 {
     return (uint64_t)esp_timer_get_time();
@@ -43,14 +66,17 @@ static proto_event_status_t status_for(esp_err_t err)
 /* TX completion event for UART / RS-485 / CAN: the request echoed with status. */
 static void fill_tx_result(proto_event_t *result, const proto_event_t *request, esp_err_t err)
 {
-    if (!result) { return; }
-    *result = *request;
-    result->event_id = proto_event_next_id();
-    result->correlation_id = request->event_id;
-    result->direction = PROTO_DIR_TX;
-    result->status = status_for(err);
-    result->error_code = (int32_t)err;
-    result->timestamp_us = now_us();
+    proto_event_t local;
+    proto_event_t *out = result ? result : &local;
+    if (!request) { return; }
+    *out = *request;
+    out->event_id = proto_event_next_id();
+    out->correlation_id = request->event_id;
+    out->direction = PROTO_DIR_TX;
+    out->status = status_for(err);
+    out->error_code = (int32_t)err;
+    out->timestamp_us = now_us();
+    observe(out);
 }
 
 static esp_err_t check_request(const proto_event_t *request, proto_protocol_t protocol)
@@ -75,6 +101,7 @@ static esp_err_t uart_receive(proto_event_t *event)
         return ESP_FAIL;
     }
     event->event_id = proto_event_next_id();
+    observe(event);
     return ESP_OK;
 }
 
@@ -104,6 +131,7 @@ static esp_err_t rs485_receive(proto_event_t *event)
         return ESP_FAIL;
     }
     event->event_id = proto_event_next_id();
+    observe(event);
     return ESP_OK;
 }
 
@@ -130,6 +158,7 @@ static esp_err_t can_receive(proto_event_t *event)
     if (err != ESP_OK) { return err; }
     if (!proto_event_from_can(event, &frame, PROTO_DIR_RX)) { return ESP_FAIL; }
     event->event_id = proto_event_next_id();
+    observe(event);
     return ESP_OK;
 }
 
@@ -156,14 +185,15 @@ static esp_err_t i2c_submit(const proto_event_t *request, proto_event_t *result)
         err = proto_event_to_i2c(request, &txn) ? proto_i2c_transact(&txn, read_data) :
               ESP_ERR_INVALID_ARG;
     }
-    if (result) {
-        if (request && request->protocol == PROTO_PROTOCOL_I2C &&
-            proto_event_i2c_result(result, request, read_data, status_for(err), (int32_t)err,
-                                   now_us())) {
-            result->event_id = proto_event_next_id();
-        } else {
-            memset(result, 0, sizeof(*result));
-        }
+    proto_event_t local;
+    proto_event_t *out = result ? result : &local;
+    if (request && request->protocol == PROTO_PROTOCOL_I2C &&
+        proto_event_i2c_result(out, request, read_data, status_for(err), (int32_t)err, now_us())) {
+        out->event_id = proto_event_next_id();
+        observe(request);
+        observe(out);
+    } else if (result) {
+        memset(result, 0, sizeof(*result));
     }
     return err;
 }
@@ -181,15 +211,17 @@ static esp_err_t spi_submit(const proto_event_t *request, proto_event_t *result)
         err = proto_event_to_spi(request, tx, sizeof(tx), &length) ?
               proto_spi_transfer(tx, rx, length) : ESP_ERR_INVALID_ARG;
     }
-    if (result) {
-        const proto_spi_snapshot_t spi = proto_spi_get_snapshot();
-        if (request && request->protocol == PROTO_PROTOCOL_SPI &&
-            proto_event_spi_result(result, request, rx, spi.mode, spi.clock_hz, status_for(err),
-                                   (int32_t)err, now_us())) {
-            result->event_id = proto_event_next_id();
-        } else {
-            memset(result, 0, sizeof(*result));
-        }
+    const proto_spi_snapshot_t spi = proto_spi_get_snapshot();
+    proto_event_t local;
+    proto_event_t *out = result ? result : &local;
+    if (request && request->protocol == PROTO_PROTOCOL_SPI &&
+        proto_event_spi_result(out, request, rx, spi.mode, spi.clock_hz, status_for(err),
+                               (int32_t)err, now_us())) {
+        out->event_id = proto_event_next_id();
+        observe(request);
+        observe(out);
+    } else if (result) {
+        memset(result, 0, sizeof(*result));
     }
     return err;
 }

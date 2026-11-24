@@ -55,3 +55,7 @@ Before ordering a consolidated batch:
 - identify test fixtures for every interface;
 - avoid buying termination, pull-up, bias, or level-shifting parts blindly.
 
+## Update (firmware 0.9.0): display
+The display in the build is a **4-pin 0.96 inch OLED, SSD1306, I2C** (replacing the 2.8 inch SPI TFT listed
+above). The microSD card is used through a separate 3.3 V SPI module. Wiring: see
+[`hardware/ProtoScope_Phase1-9_netlist.md`](hardware/ProtoScope_Phase1-9_netlist.md).

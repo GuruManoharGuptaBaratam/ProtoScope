@@ -1,0 +1,32 @@
+menu "ProtoScope local UI (OLED display and rotary encoder)"
+
+    config PROTO_UI_AUTOSTART
+        bool "Start the UI task, OLED display and encoder at boot"
+        default y
+        help
+            The display (GPIO14 SDA, GPIO10 SCL) and encoder (GPIO1, GPIO2, GPIO6) pins stay
+            parked until the UI starts. Turn this off for console-only operation.
+
+    config PROTO_DISPLAY_OLED_FLIP
+        bool "Rotate the OLED picture 180 degrees"
+        default n
+        help
+            Use this if your module is mounted upside down. It can also be changed live
+            with the console command 'display flip on|off'.
+
+    config PROTO_ENCODER_STEPS_PER_DETENT
+        int "Signal changes per encoder click (1..4)"
+        range 1 4
+        default 4
+        help
+            Most 20-click EC11/KY-040 knobs produce 4 changes per click (use 4). Knobs with
+            30 clicks per turn produce 2 (use 2). If one click moves the menu by two lines,
+            use 4; if you have to turn two clicks to move one line, use 2. Can also be
+            changed live with 'ui encoder steps N'.
+
+    config PROTO_ENCODER_INVERT
+        bool "Reverse the encoder direction"
+        default n
+        help
+            Can also be changed live with 'ui invert on|off'.
+endmenu

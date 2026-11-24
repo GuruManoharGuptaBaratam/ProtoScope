@@ -61,8 +61,8 @@ components/proto_twai/        Classic CAN/TWAI adapter (implemented in Phase 3)
 components/proto_rs485/       half-duplex UART adapter (implemented in Phase 4)
 components/proto_i2c/         controller transaction adapter (implemented in Phase 5)
 components/proto_spi/         external controller transaction adapter (implemented in Phase 5)
-components/proto_ui/          TFT and encoder
-components/proto_storage/     microSD and logger
+components/proto_ui/          OLED and encoder (implemented in Phase 9)
+components/proto_storage/     microSD and logger (implemented in Phase 8)
 ```
 
 Do not add pair-specific components such as `uart_to_can`; conversion routes
@@ -248,6 +248,8 @@ Phase 4 RS-485 available; stopped until 'rs485 start'
 Phase 5 I2C/SPI controllers available; stopped until 'i2c start' / 'spi start'
 Phase 6 common events available through 'msg'
 Phase 7 routing engine available through 'route'; all 20 routes disabled
+Phase 8 monitor and microSD logger available through 'monitor' and 'log'
+Phase 9 display and encoder UI available through 'display' and 'ui'
 ```
 
 ## 6. Testing and verification

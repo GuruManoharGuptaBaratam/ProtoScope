@@ -17,6 +17,9 @@
 #include "proto_spi_console.h"
 #include "proto_msg_console.h"
 #include "proto_route_console.h"
+#include "proto_log_console.h"
+#include "proto_monitor_console.h"
+#include "proto_ui_console.h"
 #include "proto_uart_console.h"
 #include "sdkconfig.h"
 
@@ -40,6 +43,8 @@ static int status_command(int argc, char **argv)
     proto_i2c_console_print_status();
     proto_spi_console_print_status();
     proto_route_console_print_status();
+    proto_log_console_print_status();
+    proto_ui_console_print_status();
     return 0;
 }
 
@@ -110,6 +115,12 @@ static esp_err_t register_commands(void)
                         "event command registration failed");
     ESP_RETURN_ON_ERROR(proto_route_console_register(), TAG,
                         "route command registration failed");
+    ESP_RETURN_ON_ERROR(proto_log_console_register(), TAG,
+                        "log command registration failed");
+    ESP_RETURN_ON_ERROR(proto_monitor_console_register(), TAG,
+                        "monitor command registration failed");
+    ESP_RETURN_ON_ERROR(proto_ui_console_register(), TAG,
+                        "UI command registration failed");
     return ESP_OK;
 }
 #endif

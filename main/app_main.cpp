@@ -25,4 +25,6 @@ extern "C" void app_main(void)
     ESP_LOGI(kTag, "Phase 5 I2C/SPI controllers available; stopped until 'i2c start' / 'spi start'");
     ESP_LOGI(kTag, "Phase 6 common events available through 'msg'");
     ESP_LOGI(kTag, "Phase 7 routing engine available through 'route'; all 20 routes disabled");
+    ESP_LOGI(kTag, "Phase 8 monitor and microSD logger available through 'monitor' and 'log'");
+    ESP_LOGI(kTag, "Phase 9 display and encoder UI available through 'display' and 'ui'");
 }

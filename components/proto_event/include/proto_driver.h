@@ -31,6 +31,13 @@ typedef struct {
 
 /* NULL for an invalid protocol. */
 const proto_driver_t *proto_driver_get(proto_protocol_t protocol);
+/* Observer tap (Phase 8): called for every RX event delivered through receive(), for
+ * every TX completion event, and for I2C/SPI request + result events, no matter who
+ * (route engine, console, monitor) used the driver contract. NULL disables it. The
+ * callback runs in the caller's task and must be fast and non-blocking. */
+typedef void (*proto_event_observer_t)(const proto_event_t *event);
+void proto_event_set_observer(proto_event_observer_t observer);
+
 /* Unique, monotonically increasing event ids (never 0). */
 uint64_t proto_event_next_id(void);
 

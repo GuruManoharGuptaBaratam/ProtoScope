@@ -33,6 +33,13 @@ in the development console. [Phase 2 instructions](docs/phase-2-uart.md) cover
 framing, console commands, wiring and automated external-adapter tests.
 Successful physical boot and external UART TX/RX are still unverified.
 
+**Phases 8-9 (monitor, microSD logger, OLED + encoder UI):** see
+[`docs/phase-8-monitor-logger.md`](docs/phase-8-monitor-logger.md) and
+[`docs/phase-9-ui.md`](docs/phase-9-ui.md); complete wiring in
+[`docs/hardware/`](docs/hardware/ProtoScope_Phase1-9_netlist.md). Use `./tools/verify_phase9.sh`. The
+display is the 4-pin 0.96 inch SSD1306 I2C OLED. Host-tested only; not built against ESP-IDF or tested on
+hardware yet.
+
 **Phase 7 (routing engine):** a configurable engine for the 20 directed routes RT-01..RT-20,
 all disabled until configured and enabled from the console. See
 [`docs/phase-7-routing-engine.md`](docs/phase-7-routing-engine.md). Use `./tools/verify_phase7.sh`.

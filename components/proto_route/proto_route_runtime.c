@@ -103,3 +103,15 @@ proto_route_engine_t *proto_route_runtime_engine(void)
 {
     return &s_engine;
 }
+
+bool proto_route_runtime_source_in_use(proto_protocol_t protocol)
+{
+    if (!s_lock) { return false; }
+    bool used = false;
+    xSemaphoreTake(s_lock, portMAX_DELAY);
+    for (size_t i = 0; i < PROTO_ROUTE_COUNT; ++i) {
+        used = used || (s_engine.routes[i].config.enabled && s_engine.routes[i].config.source == protocol);
+    }
+    xSemaphoreGive(s_lock);
+    return used;
+}

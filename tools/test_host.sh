@@ -72,4 +72,52 @@ trap 'rm -rf -- "$proto_test_dir"' EXIT
     "$proto_root/components/proto_spi/proto_spi_codec.c" \
     -o "$proto_test_dir/test_proto_route"
 "$proto_test_dir/test_proto_route"
+"${CC:-cc}" -std=c11 -Wall -Wextra -Werror -pedantic \
+    -fsanitize=address,undefined -g \
+    -I "$proto_root/components/proto_storage/include" \
+    -I "$proto_root/components/proto_event/include" \
+    -I "$proto_root/components/proto_twai/include" \
+    -I "$proto_root/components/proto_uart/include" \
+    -I "$proto_root/components/proto_i2c/include" \
+    -I "$proto_root/components/proto_spi/include" \
+    "$proto_root/tests/host/test_proto_log.c" \
+    "$proto_root/components/proto_storage/proto_log_format.c" \
+    "$proto_root/components/proto_storage/proto_log_queue.c" \
+    "$proto_root/components/proto_storage/proto_logger.c" \
+    "$proto_root/components/proto_event/proto_event.c" \
+    "$proto_root/components/proto_event/proto_event_caps.c" \
+    "$proto_root/components/proto_event/proto_hex.c" \
+    "$proto_root/components/proto_twai/proto_can_codec.c" \
+    "$proto_root/components/proto_uart/proto_uart_framer.c" \
+    "$proto_root/components/proto_i2c/proto_i2c_codec.c" \
+    "$proto_root/components/proto_spi/proto_spi_codec.c" \
+    -o "$proto_test_dir/test_proto_log"
+"$proto_test_dir/test_proto_log"
+"${CC:-cc}" -std=c11 -Wall -Wextra -Werror -pedantic \
+    -fsanitize=address,undefined -g \
+    -I "$proto_root/components/proto_ui/include" \
+    -I "$proto_root/components/proto_monitor/include" \
+    -I "$proto_root/components/proto_storage/include" \
+    -I "$proto_root/components/proto_event/include" \
+    -I "$proto_root/components/proto_twai/include" \
+    -I "$proto_root/components/proto_uart/include" \
+    -I "$proto_root/components/proto_i2c/include" \
+    -I "$proto_root/components/proto_spi/include" \
+    "$proto_root/tests/host/test_proto_ui.c" \
+    "$proto_root/components/proto_ui/proto_canvas.c" \
+    "$proto_root/components/proto_ui/proto_font5x7.c" \
+    "$proto_root/components/proto_ui/proto_encoder_decode.c" \
+    "$proto_root/components/proto_ui/proto_ui_model.c" \
+    "$proto_root/components/proto_event/proto_event_caps.c" \
+    "$proto_root/components/proto_event/proto_event.c" \
+    "$proto_root/components/proto_event/proto_hex.c" \
+    "$proto_root/components/proto_twai/proto_can_codec.c" \
+    "$proto_root/components/proto_uart/proto_uart_framer.c" \
+    "$proto_root/components/proto_i2c/proto_i2c_codec.c" \
+    "$proto_root/components/proto_spi/proto_spi_codec.c" \
+    "$proto_root/components/proto_storage/proto_log_format.c" \
+    "$proto_root/components/proto_storage/proto_log_queue.c" \
+    "$proto_root/components/proto_storage/proto_logger.c" \
+    -o "$proto_test_dir/test_proto_ui"
+"$proto_test_dir/test_proto_ui"
 python3 "$proto_root/tests/host/test_n16r8_config.py"
